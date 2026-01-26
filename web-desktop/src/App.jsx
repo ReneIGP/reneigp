@@ -1,14 +1,27 @@
 import React, { useState } from 'react';
 import { projects } from './data/projects.js';
+import Window from './components/Window';
 import './App.css';
 
 function App() {
   const [openWindows, setOpenWindows] = useState([]);
+  const [nextZ, setNextZ] = useState(100);
 
   const openWindow = (project) => {
-    if (!openWindows.find(w => w.id === project.id)) {
-      setOpenWindows([...openWindows, project]);
+    const existing = openWindows.find(w => w.id === project.id);
+    if (!existing) {
+      setOpenWindows([...openWindows, { ...project, zIndex: nextZ }]);
+      setNextZ(nextZ + 1);
+    } else {
+      handleFocus(project.id);
     }
+  };
+
+  const handleFocus = (id) => {
+    setOpenWindows(openWindows.map(w => 
+      w.id === id ? { ...w, zIndex: nextZ } : w
+    ));
+    setNextZ(nextZ + 1);
   };
 
   const closeWindow = (id) => {
@@ -17,7 +30,7 @@ function App() {
 
   return (
     <div className="desktop">
-      {/* 1. Desktop Icons */}
+      {/* 1. Desktop Icon Grid */}
       <div className="icon-grid">
         {projects.map(p => (
           <div key={p.id} className="icon" onClick={() => openWindow(p)}>
@@ -29,15 +42,12 @@ function App() {
 
       {/* 2. Floating Windows */}
       {openWindows.map(win => (
-        <div key={win.id} className="window-frame" style={{ width: win.launch.width, height: win.launch.height }}>
-          <div className="title-bar">
-            <span>{win.name}</span>
-            <button className="close-btn" onClick={() => closeWindow(win.id)}>X</button>
-          </div>
-          <div className="window-content">
-            <iframe src={win.url} title={win.name} frameBorder="0" />
-          </div>
-        </div>
+        <Window 
+          key={win.id} 
+          window={win} 
+          onClose={() => closeWindow(win.id)} 
+          onFocus={() => handleFocus(win.id)} 
+        />
       ))}
     </div>
   );

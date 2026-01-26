@@ -1,7 +1,7 @@
 .desktop {
   width: 100vw;
   height: 100vh;
-  background: #242424; /* You can change this to an image URL later */
+  background: #ffffff url('./assets/Big_Potato_Man_Maugerville_2025.jpg') center/cover no-repeat;
   position: relative;
   overflow: hidden;
 }
@@ -9,8 +9,11 @@
 .icon-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, 100px);
+  grid-auto-rows: 120px;
   gap: 20px;
-  padding: 20px;
+  padding: 30px;
+  position: relative;
+  z-index: 10;
 }
 
 .icon {
@@ -18,16 +21,24 @@
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  color: white;
-  text-shadow: 1px 1px 2px black;
+  padding: 10px;
+  border-radius: 8px;
 }
 
-.icon img { width: 50px; height: 50px; margin-bottom: 5px; }
+.icon:hover { background: rgba(255, 255, 255, 0.2); }
 
-.window-frame {
+.icon img { width: 50px; height: 50px; }
+
+.icon span {
+  margin-top: 8px;
+  color: white;
+  font-size: 14px;
+  text-shadow: 2px 2px 4px black;
+}
+
+/* WINDOW STYLES */
+.window {
   position: absolute;
-  top: 50px;
-  left: 50px;
   background: white;
   border: 1px solid #333;
   box-shadow: 0 10px 30px rgba(0,0,0,0.5);
@@ -35,13 +46,25 @@
   flex-direction: column;
 }
 
-.title-bar {
+.titlebar {
   background: #333;
   color: white;
   padding: 5px 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: default;
 }
 
-.window-content, iframe { width: 100%; height: 100%; }
+.close-btn {
+  background: #ff5f56;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+}
+
+.content { flex-grow: 1; height: 100%; }
+iframe { width: 100%; height: 100%; border: none; }
