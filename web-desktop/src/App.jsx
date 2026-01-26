@@ -1,56 +1,46 @@
 import React, { useState } from 'react';
-import { DESKTOP_DATA } from './data/projects';
-import Icon from './components/Icon';
-import Window from './components/Window';
+import { projects } from './data/projects.js';
 import './App.css';
 
-export default function App() {
+function App() {
   const [openWindows, setOpenWindows] = useState([]);
-  const [zCounter, setZCounter] = useState(10);
 
   const openWindow = (project) => {
-    // Check if already open
-    if (openWindows.find(w => w.id === project.id)) {
-      focusWindow(project.id);
-      return;
+    if (!openWindows.find(w => w.id === project.id)) {
+      setOpenWindows([...openWindows, project]);
     }
-    const nextZ = zCounter + 1;
-    setZCounter(nextZ);
-    setOpenWindows([...openWindows, { ...project, zIndex: nextZ }]);
-  };
-
-  const focusWindow = (id) => {
-    const nextZ = zCounter + 1;
-    setZCounter(nextZ);
-    setOpenWindows(prev => prev.map(w => 
-      w.id === id ? { ...w, zIndex: nextZ } : w
-    ));
   };
 
   const closeWindow = (id) => {
-    setOpenWindows(prev => prev.filter(w => w.id !== id));
+    setOpenWindows(openWindows.filter(w => w.id !== id));
   };
 
   return (
     <div className="desktop">
+      {/* 1. Desktop Icons */}
       <div className="icon-grid">
-        {DESKTOP_DATA.projects.map(p => (
-          <Icon key={p.id} project={p} onOpen={() => openWindow(p)} />
+        {projects.map(p => (
+          <div key={p.id} className="icon" onClick={() => openWindow(p)}>
+            <img src={p.icon} alt={p.name} />
+            <span>{p.name}</span>
+          </div>
         ))}
       </div>
 
-      <div className="windows-layer">
-        {openWindows.map(win => (
-          <Window 
-            key={win.id} 
-            window={win} 
-            onClose={() => closeWindow(win.id)} 
-            onFocus={() => focusWindow(win.id)}
-          />
-        ))}
-      </div>
-      
-      <div className="taskbar">Start</div>
+      {/* 2. Floating Windows */}
+      {openWindows.map(win => (
+        <div key={win.id} className="window-frame" style={{ width: win.launch.width, height: win.launch.height }}>
+          <div className="title-bar">
+            <span>{win.name}</span>
+            <button className="close-btn" onClick={() => closeWindow(win.id)}>X</button>
+          </div>
+          <div className="window-content">
+            <iframe src={win.url} title={win.name} frameBorder="0" />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
+
+export default App;

@@ -1,42 +1,47 @@
 .desktop {
-  width: 100vw; height: 100vh;
-  background: #1e1e2e;
-  position: relative; overflow: hidden;
+  width: 100vw;
+  height: 100vh;
+  background: #242424; /* You can change this to an image URL later */
+  position: relative;
+  overflow: hidden;
 }
 
 .icon-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
-  grid-auto-rows: 96px;
+  grid-template-columns: repeat(auto-fill, 100px);
   gap: 20px;
   padding: 20px;
-  z-index: 1;
 }
 
-.window {
-  position: absolute;
+.icon {
   display: flex;
   flex-direction: column;
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  align-items: center;
+  cursor: pointer;
+  color: white;
+  text-shadow: 1px 1px 2px black;
 }
 
-.titlebar {
-  background: #313244;
+.icon img { width: 50px; height: 50px; margin-bottom: 5px; }
+
+.window-frame {
+  position: absolute;
+  top: 50px;
+  left: 50px;
+  background: white;
+  border: 1px solid #333;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+}
+
+.title-bar {
+  background: #333;
   color: white;
-  padding: 8px 12px;
+  padding: 5px 10px;
   display: flex;
   justify-content: space-between;
-  cursor: grab;
+  align-items: center;
 }
 
-.content { flex-grow: 1; display: flex; }
-.content iframe { width: 100%; height: 100%; border: none; }
-
-.taskbar {
-  position: fixed; bottom: 0;
-  width: 100%; height: 40px;
-  background: rgba(17, 17, 27, 0.8);
-  backdrop-filter: blur(10px);
-}
+.window-content, iframe { width: 100%; height: 100%; }
