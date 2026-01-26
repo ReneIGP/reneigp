@@ -1,0 +1,42 @@
+.desktop {
+  width: 100vw; height: 100vh;
+  background: #1e1e2e;
+  position: relative; overflow: hidden;
+}
+
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  grid-auto-rows: 96px;
+  gap: 20px;
+  padding: 20px;
+  z-index: 1;
+}
+
+.window {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.titlebar {
+  background: #313244;
+  color: white;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  cursor: grab;
+}
+
+.content { flex-grow: 1; display: flex; }
+.content iframe { width: 100%; height: 100%; border: none; }
+
+.taskbar {
+  position: fixed; bottom: 0;
+  width: 100%; height: 40px;
+  background: rgba(17, 17, 27, 0.8);
+  backdrop-filter: blur(10px);
+}
