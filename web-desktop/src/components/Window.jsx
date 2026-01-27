@@ -1,4 +1,4 @@
-export default function Window({ window, onClose, onFocus, onDragStart }) {
+export default function Window({ window, onClose, onFocus, onDragStart, isDragging }) {
   const style = {
     width: window.launch.width,
     height: window.launch.height,
@@ -17,8 +17,17 @@ export default function Window({ window, onClose, onFocus, onDragStart }) {
           onClose();
         }}>X</button>
       </div>
-      <div className="content">
-        <iframe src={window.url} title={window.name} />
+      <div className="content" style={{ position: 'relative' }}>
+        {isDragging && <div className="iframe-shield"></div>}
+        {window.type === 'folder' ? (
+          <div className="folder-view">
+
+             {/* Folder logic content*/}
+             <p style={{color: '#999', fontSize: '12px'}}>Folder is empty</p>
+          </div>
+        ) : (
+          <iframe src={window.url} title={window.name} />
+        )}
       </div>
     </div>
   );

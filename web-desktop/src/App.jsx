@@ -10,6 +10,7 @@ function App() {
   const [menuPos, setMenuPos] = useState(null);
   const [draggingIcon, setDraggingIcon] = useState(null);
   const [draggingWin, setDraggingWin] = useState(null);
+  const [items, setItems] = useState([...projects]);
 
   /*----------------------------------[Initialize icon positions]-----------------------------------*/
   const [iconPositions, setIconPositions] = useState(
@@ -65,20 +66,36 @@ function App() {
   
   /*----------------------------------[Window Handlers]-----------------------------------*/
   const createNewPage = () => {
-  const id = `new-page-${Date.now()}`;
-  const newProject = {
-    id,
-    name: "New Page",
-    icon: "https://www.svgrepo.com/show/532195/apc-indicator.svg", 
-    url: "/os/new-page-template.html", 
-    launch: { width: "400px", height: "300px" }
+    const id = `new-page-${Date.now()}`;
+    const newItem = {
+      id,
+      name: "New Page",
+      type: "page",
+      icon: "https://www.svgrepo.com/show/532195/app-indicator.svg", 
+      url: "/os/new-page-template.html", 
+      launch: { width: "400px", height: "300px" }
+    };
+    
+    setIconPositions(prev => ({ ...prev, [id]: { x: menuPos.x, y: menuPos.y } }));
+    setItems(prev => [...prev, newItem]);
+    setMenuPos(null);
   };
-  
-  // Update positions and projects
-  setIconPositions(prev => ({ ...prev, [id]: { x: menuPos.x, y: menuPos.y } }));
-  projects.push(newProject); 
-  setMenuPos(null);
-};
+
+  const createNewFolder = () => {
+    const id = `folder-${Date.now()}`;
+    const newItem = {
+      id,
+      name: "New Folder",
+      type: "folder",
+      icon: "https://www.svgrepo.com/show/532276/folder.svg",
+      children: [],
+      launch: { width: "400px", height: "300px" }
+    };
+    
+    setIconPositions(prev => ({ ...prev, [id]: { x: menuPos.x, y: menuPos.y } }));
+    setItems(prev => [...prev, newItem]);
+    setMenuPos(null);
+  };
 
   const openWindow = (project) => {
     const existing = openWindows.find(w => w.id === project.id);
@@ -116,7 +133,7 @@ function App() {
       onMouseUp={stopDragging}
     >
       {/* 1. Icons */}
-      {projects.map(p => (
+      {items.map(p => (
         <div 
           key={p.id} 
           className="icon" 
@@ -138,7 +155,7 @@ function App() {
         <Window 
           key={win.id} 
           window={win} 
-          isDragging={draggingWin?.id === win.id} // Pass drag state here
+          isDragging={draggingWin?.id === win.id}
           onClose={() => closeWindow(win.id)} 
           onFocus={() => handleFocus(win.id)} 
           onDragStart={(e) => startWinDrag(win.id, e)}
@@ -160,7 +177,8 @@ function App() {
       {/* 4. Context Menu */}
       {menuPos && (
       <div className="context-menu" style={{ top: menuPos.y, left: menuPos.x }}>
-        <div className="menu-item" onClick={createNewPage}>Create New Page</div>
+        <div className="menu-item" onClick={createNewPage}>New Page</div>
+        <div className="menu-item" onClick={createNewFolder}>New Folder</div>
         <div className="menu-item" onClick={() => window.location.reload()}>Refresh Desktop</div>
       </div>
     )}
