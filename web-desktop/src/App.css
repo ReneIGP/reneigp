@@ -1,10 +1,15 @@
+/*----------------------------------[desktop]-----------------------------------*/
+
 .desktop {
   width: 100vw;
   height: 100vh;
   background: #ffffff url('./assets/Big_Potato_Man_Maugerville_2025.jpg') center/cover no-repeat;
   position: relative;
   overflow: hidden;
+  user-select: none;
 }
+
+/*----------------------------------[icon]-----------------------------------*/
 
 .icon-grid {
   display: grid;
@@ -19,24 +24,39 @@
 .icon {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  padding: 10px;
-  border-radius: 8px;
+  align-items: center;    /* Centers the image and text horizontally */
+  justify-content: flex-start;
+  cursor: grab;           /* Changes cursor to indicate draggable */
+  text-align: center;     /* Centers the actual text lines */
+  padding: 5px;
+  width: 100px;           
+  overflow: visible;      /* Prevents text from being cut off */
 }
 
 .icon:hover { background: rgba(255, 255, 255, 0.2); }
 
-.icon img { width: 50px; height: 50px; }
-
-.icon span {
-  margin-top: 8px;
-  color: white;
-  font-size: 14px;
-  text-shadow: 2px 2px 4px black;
+.icon:active {
+  cursor: grabbing;
 }
 
-/* WINDOW STYLES */
+.icon img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 5px;
+  pointer-events: none; /* Prevents ghost image drag */
+}
+
+.icon span {
+  width: 100%;            
+  margin-top: 4px;
+  font-size: 12px;
+  line-height: 1.2;       
+  color: white;
+  text-shadow: 2px 2px 4px rgba(184, 16, 175, 0.9);
+  word-wrap: break-word;  
+}
+
+/*----------------------------------[window]-----------------------------------*/
 .window {
   position: absolute;
   background: white;
@@ -68,3 +88,51 @@
 
 .content { flex-grow: 1; height: 100%; }
 iframe { width: 100%; height: 100%; border: none; }
+
+
+/*----------------------------------[taskbar]-----------------------------------*/
+.taskbar {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 40px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  z-index: 9999; /* Always on top of windows */
+}
+
+.start-btn {
+  width: 30px;
+  height: 30px;
+  background: #646cff;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  margin-right: 15px;
+  cursor: pointer;
+}
+
+.taskbar-apps {
+  display: flex;
+  gap: 5px;
+}
+
+.task-item {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 5px 15px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  border-bottom: 2px solid #646cff; /* Highlights that it's open */
+}
+
+.task-item:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
