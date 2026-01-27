@@ -1,21 +1,24 @@
-export default function Window({ window, onClose, onFocus }) {
+export default function Window({ window, onClose, onFocus, onDragStart }) {
   const style = {
     width: window.launch.width,
     height: window.launch.height,
     zIndex: window.zIndex,
-    top: '10%', left: '20%' // Phase 2: Add dragging logic to update these
+    top: window.y,
+    left: window.x,
+    position: 'absolute'
   };
 
   return (
     <div className="window" style={style} onMouseDown={onFocus}>
-      <div className="titlebar">
+      <div className="titlebar" onMouseDown={onDragStart}>
         <span>{window.name}</span>
-        <div className="controls">
-          <button onClick={onClose}>X</button>
-        </div>
+        <button className="close-btn" onClick={(e) => {
+          e.stopPropagation();
+          onClose();
+        }}>X</button>
       </div>
       <div className="content">
-        <iframe src={window.url} title={window.name} sandbox="allow-scripts allow-same-origin" />
+        <iframe src={window.url} title={window.name} />
       </div>
     </div>
   );
