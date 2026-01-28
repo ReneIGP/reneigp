@@ -3,3 +3,5 @@ bugs:
 when opening context menu (selecting icon) can quit without selecting an option. Ex, I select icon, want to change name, change my mind, i have to perform an aciton.
 
 when selecting 3 icons, one time the folder i put them in dissapeared 
+
+if name of icon is too long it goes out of the box. 

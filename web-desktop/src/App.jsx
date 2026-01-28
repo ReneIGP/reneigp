@@ -234,6 +234,18 @@ function App() {
         }} />
       )}
 
+      {/* Taskbar */}
+      <div className="taskbar">
+        <div className="start-btn">R</div>
+        <div className="taskbar-apps">
+          {openWindows.map(win => (
+            <div key={win.id} className="task-item" onClick={() => handleFocus(win.id)}>
+              {win.name}
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* only select items on desktop*/}
       {items.filter(p => !p.parentId).map(p => (
         <div 
