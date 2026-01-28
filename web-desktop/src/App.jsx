@@ -200,6 +200,21 @@ function App() {
     setMenuPos({ x: e.clientX, y: e.clientY });
   };
 
+  const renameItem = () => {
+    const idToRename = selectedIds[0];
+    const item = items.find(i => i.id === idToRename);
+    
+    if (item) {
+      const newName = prompt("Enter new name:", item.name);
+      if (newName && newName.trim() !== "") {
+        setItems(prev => prev.map(i => 
+          i.id === idToRename ? { ...i, name: newName } : i
+        ));
+      }
+    }
+    setMenuPos(null);
+  };
+
   /*----------------------------------[HTML]-----------------------------------*/
   return (
     <div 
@@ -255,12 +270,26 @@ function App() {
       {/* Context Menu */}
       {menuPos && (
         <div className="context-menu" style={{ top: menuPos.y, left: menuPos.x }} onClick={(e) => e.stopPropagation()}>
-          {/* only delete selected items*/}
+          {/* only show when something is selected*/}
           {selectedIds.length > 0 && (
-            <div className="menu-item delete" onClick={deleteSelected}>
-              Delete ({selectedIds.length})
-            </div>
+            <>
+              <div className="menu-item delete" onClick={deleteSelected}>
+                Delete ({selectedIds.length})
+              </div>
+              
+              {/* only rename one at a time*/}
+              {selectedIds.length === 1 && (
+                <div className="menu-item" onClick={renameItem}>
+                  Rename
+                </div>
+              )}
+              
+              {/* separator*/}
+              <hr style={{ border: 'none', borderTop: '1px solid #444', margin: '4px 0' }} />
+            </>
           )}
+
+          {/* Creation Group: Always shows */}
           <div className="menu-item" onClick={createNewPage}>New Page</div>
           <div className="menu-item" onClick={createNewFolder}>New Folder</div>
           <div className="menu-item" onClick={() => window.location.reload()}>Refresh Desktop</div>
