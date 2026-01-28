@@ -1,5 +1,4 @@
 export default function Window({ window, onClose, onFocus, onDragStart, isDragging, allItems, onOpenItem }) {
-  // Define the dynamic styles based on the window's state and position
   const style = {
     width: window.launch?.width || '400px',
     height: window.launch?.height || '300px',
@@ -9,22 +8,28 @@ export default function Window({ window, onClose, onFocus, onDragStart, isDraggi
     position: 'absolute'
   };
 
-  // Find items that belong to this specific folder based on parentId
   const children = allItems?.filter(item => item.parentId === window.id) || [];
 
   return (
-    <div className="window" style={style} onMouseDown={onFocus}>
-      {/* Titlebar acts as the drag handle */}
+    <div 
+      className="window" 
+      style={style} 
+      /* e.stopPropagation() is vital here so clicking a window doesn't start a marquee selection on the desktop background */
+      onMouseDown={(e) => { 
+        e.stopPropagation(); 
+        onFocus(); 
+      }}
+    >
       <div className="titlebar" onMouseDown={onDragStart}>
         <span>{window.name}</span>
         <button className="close-btn" onClick={(e) => {
-          e.stopPropagation(); // Prevents focus event from triggering on close
+          e.stopPropagation();
           onClose();
         }}>X</button>
       </div>
 
       <div className="content" style={{ position: 'relative' }}>
-        {/* Iframe shield prevents the iframe from "stealing" mouse events during drag */}
+        {/* Shield prevents iframe lag by capturing mouse movement during drag */}
         {isDragging && <div className="iframe-shield"></div>}
 
         {window.type === 'folder' ? (
@@ -33,11 +38,12 @@ export default function Window({ window, onClose, onFocus, onDragStart, isDraggi
               <div 
                 key={item.id} 
                 className="icon" 
-                style={{ position: 'relative' }} // Folder icons stay in grid flow
+                /* prevents folder icon clicks from triggering desktop logic */
+                onMouseDown={(e) => e.stopPropagation()}
                 onDoubleClick={() => onOpenItem(item)}
               >
                 <img src={item.icon} alt={item.name} style={{ width: '40px' }} draggable="false" />
-                <span style={{ fontSize: '12px', color: '#333', textShadow: 'none' }}>
+                <span style={{ fontSize: '11px', color: '#333', textShadow: 'none' }}>
                   {item.name}
                 </span>
               </div>

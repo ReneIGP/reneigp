@@ -11,6 +11,8 @@ function App() {
   const [draggingIcon, setDraggingIcon] = useState(null);
   const [draggingWin, setDraggingWin] = useState(null);
   const [items, setItems] = useState([...projects]);
+  const [selectionBox, setSelectionBox] = useState(null);
+  const [selectedIds, setSelectedIds] = useState([]);
 
   /*----------------------------------[Initialize icon positions]-----------------------------------*/
   const [iconPositions, setIconPositions] = useState(
@@ -20,12 +22,32 @@ function App() {
     }), {})
   );
 
+  /*----------------------------------[Selection Logic]-----------------------------------*/
+  const startSelection = (e) => {
+    // Only start selection if clicking the desktop background itself
+    if (e.target.className === 'desktop') {
+      setSelectedIds([]); 
+      setSelectionBox({ 
+        startX: e.clientX, 
+        startY: e.clientY, 
+        currentX: e.clientX, 
+        currentY: e.clientY 
+      });
+    }
+  };
+
   /*----------------------------------[Drag & Drop Logic]-----------------------------------*/
   const startIconDrag = (id, e) => {
+    e.stopPropagation();
+    // If we click an unselected icon, clear previous selection and select this one
+    if (!selectedIds.includes(id)) {
+      setSelectedIds([id]);
+    }
+
     setDraggingIcon({
       id,
-      offsetX: e.clientX - iconPositions[id].x,
-      offsetY: e.clientY - iconPositions[id].y
+      lastX: e.clientX,
+      lastY: e.clientY
     });
   };
 
@@ -40,16 +62,44 @@ function App() {
   };
 
   const handleGlobalMouseMove = (e) => {
-    if (draggingIcon) {
-      setIconPositions({
-        ...iconPositions,
-        [draggingIcon.id]: {
-          x: e.clientX - draggingIcon.offsetX,
-          y: e.clientY - draggingIcon.offsetY
-        }
-      });
+    // 1. Handle Selection Box Drawing
+    if (selectionBox) {
+      const currentBox = { ...selectionBox, currentX: e.clientX, currentY: e.clientY };
+      setSelectionBox(currentBox);
+      
+      const left = Math.min(currentBox.startX, currentBox.currentX);
+      const top = Math.min(currentBox.startY, currentBox.currentY);
+      const right = Math.max(currentBox.startX, currentBox.currentX);
+      const bottom = Math.max(currentBox.startY, currentBox.currentY);
+
+      const overlapping = items.filter(item => {
+        const pos = iconPositions[item.id];
+        if (!pos || item.parentId) return false;
+        // Icon hitbox: 100x120
+        return (pos.x < right && pos.x + 100 > left && pos.y < bottom && pos.y + 120 > top);
+      }).map(item => item.id);
+
+      setSelectedIds(overlapping);
     }
 
+    // 2. Handle Icon(s) Dragging
+    if (draggingIcon) {
+      const dx = e.clientX - draggingIcon.lastX;
+      const dy = e.clientY - draggingIcon.lastY;
+
+      const newPositions = { ...iconPositions };
+      selectedIds.forEach(id => {
+        newPositions[id] = { 
+          x: (newPositions[id]?.x || 0) + dx, 
+          y: (newPositions[id]?.y || 0) + dy 
+        };
+      });
+
+      setIconPositions(newPositions);
+      setDraggingIcon({ ...draggingIcon, lastX: e.clientX, lastY: e.clientY });
+    }
+
+    // 3. Handle Window Dragging
     if (draggingWin) {
       setOpenWindows(openWindows.map(w => 
         w.id === draggingWin.id 
@@ -60,35 +110,29 @@ function App() {
   };
 
   const stopDragging = (e) => {
-    if (draggingIcon) {
-      // get drop coordinates
+    setSelectionBox(null);
+
+    if (draggingIcon && !selectionBox) {
       const dropX = e.clientX;
       const dropY = e.clientY;
 
-      // check if landed in folder icon
       const targetFolder = items.find(item => {
-        if (item.type !== 'folder' || item.id === draggingIcon.id) return false;
-        
+        if (item.type !== 'folder' || selectedIds.includes(item.id)) return false;
         const pos = iconPositions[item.id];
-        // check if drop coordinates are within the folder icons 100x120 area
-        return (
-          dropX >= pos.x && dropX <= pos.x + 100 &&
-          dropY >= pos.y && dropY <= pos.y + 120
-        );
+        return (dropX >= pos.x && dropX <= pos.x + 100 && dropY >= pos.y && dropY <= pos.y + 120);
       });
 
       if (targetFolder) {
-        // move the item into the folder's children array
         setItems(prevItems => prevItems.map(item => {
           if (item.id === targetFolder.id) {
-            return { ...item, children: [...(item.children || []), draggingIcon.id] };
+            return { ...item, children: [...(item.children || []), ...selectedIds] };
           }
-          // mark the item as "hidden" from the desktop by giving it a parentId
-          if (item.id === draggingIcon.id) {
+          if (selectedIds.includes(item.id)) {
             return { ...item, parentId: targetFolder.id };
           }
           return item;
         }));
+        setSelectedIds([]);
       }
     }
     setDraggingIcon(null);
@@ -106,7 +150,6 @@ function App() {
       url: "/os/new-page-template.html", 
       launch: { width: "400px", height: "300px" }
     };
-    
     setIconPositions(prev => ({ ...prev, [id]: { x: menuPos.x, y: menuPos.y } }));
     setItems(prev => [...prev, newItem]);
     setMenuPos(null);
@@ -122,7 +165,6 @@ function App() {
       children: [],
       launch: { width: "400px", height: "300px" }
     };
-    
     setIconPositions(prev => ({ ...prev, [id]: { x: menuPos.x, y: menuPos.y } }));
     setItems(prev => [...prev, newItem]);
     setMenuPos(null);
@@ -139,9 +181,7 @@ function App() {
   };
 
   const handleFocus = (id) => {
-    setOpenWindows(openWindows.map(w => 
-      w.id === id ? { ...w, zIndex: nextZ } : w
-    ));
+    setOpenWindows(openWindows.map(w => w.id === id ? { ...w, zIndex: nextZ } : w));
     setNextZ(nextZ + 1);
   };
 
@@ -149,27 +189,35 @@ function App() {
     setOpenWindows(openWindows.filter(w => w.id !== id));
   };
 
-  /*----------------------------------[Context Menu]-----------------------------------*/
   const handleContextMenu = (e) => {
     e.preventDefault();
     setMenuPos({ x: e.clientX, y: e.clientY });
   };
 
-
-  /*----------------------------------[]-----------------------------------*/
+  /*----------------------------------[HTML]-----------------------------------*/
   return (
     <div 
       className="desktop" 
       onContextMenu={handleContextMenu} 
-      onClick={() => setMenuPos(null)} 
+      onMouseDown={startSelection}
       onMouseMove={handleGlobalMouseMove} 
       onMouseUp={stopDragging}
     >
-      {/* cons only on desktop */}
+      {/* selection marquee */}
+      {selectionBox && (
+        <div className="selection-marquee" style={{
+          left: Math.min(selectionBox.startX, selectionBox.currentX),
+          top: Math.min(selectionBox.startY, selectionBox.currentY),
+          width: Math.abs(selectionBox.currentX - selectionBox.startX),
+          height: Math.abs(selectionBox.currentY - selectionBox.startY)
+        }} />
+      )}
+
+      {/* only select items on desktop*/}
       {items.filter(p => !p.parentId).map(p => (
         <div 
           key={p.id} 
-          className="icon" 
+          className={`icon ${selectedIds.includes(p.id) ? 'selected' : ''}`}
           style={{ 
             position: 'absolute', 
             left: iconPositions[p.id]?.x || 0, 
@@ -177,6 +225,7 @@ function App() {
           }}
           onMouseDown={(e) => startIconDrag(p.id, e)}
           onDoubleClick={() => openWindow(p)}
+          onClick={(e) => e.stopPropagation()}
         >
           <img src={p.icon} alt={p.name} draggable="false" />
           <span>{p.name}</span>
@@ -188,17 +237,14 @@ function App() {
         <Window 
           key={win.id} 
           window={win} 
-          allItems={items} // Pass the full items list
-          onOpenItem={(item) => openWindow(item)} // Allow opening items from folder
+          allItems={items}
+          onOpenItem={(item) => openWindow(item)}
           isDragging={draggingWin?.id === win.id}
           onClose={() => closeWindow(win.id)} 
           onFocus={() => handleFocus(win.id)} 
           onDragStart={(e) => startWinDrag(win.id, e)}
         />
       ))}
-
-
-  {/*----------------------------------[htlm]-----------------------------------*/}
 
       {/* Taskbar */}
       <div className="taskbar">
@@ -214,12 +260,12 @@ function App() {
 
       {/* Context Menu */}
       {menuPos && (
-      <div className="context-menu" style={{ top: menuPos.y, left: menuPos.x }}>
-        <div className="menu-item" onClick={createNewPage}>New Page</div>
-        <div className="menu-item" onClick={createNewFolder}>New Folder</div>
-        <div className="menu-item" onClick={() => window.location.reload()}>Refresh Desktop</div>
-      </div>
-    )}
+        <div className="context-menu" style={{ top: menuPos.y, left: menuPos.x }} onClick={(e) => e.stopPropagation()}>
+          <div className="menu-item" onClick={createNewPage}>New Page</div>
+          <div className="menu-item" onClick={createNewFolder}>New Folder</div>
+          <div className="menu-item" onClick={() => window.location.reload()}>Refresh Desktop</div>
+        </div>
+      )}
     </div>
   );
 }
