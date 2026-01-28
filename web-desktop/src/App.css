@@ -183,6 +183,15 @@ iframe { width: 100%; height: 100%; border: none; }
   background: #646cff;
 }
 
+/*----------------------------------[Delete]-----------------------------------*/
+
+
+.menu-item.delete {
+  color: #ff5f56;
+  font-weight: bold;
+  border-bottom: 1px solid #444;
+}
+
 /*----------------------------------[Selection Marquee]-----------------------------------*/
 .selection-marquee {
   position: absolute;

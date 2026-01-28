@@ -170,6 +170,12 @@ function App() {
     setMenuPos(null);
   };
 
+  const deleteSelected = () => {
+    setItems(items.filter(item => !selectedIds.includes(item.id)));
+    setSelectedIds([]);
+    setMenuPos(null);
+  };
+
   const openWindow = (project) => {
     const existing = openWindows.find(w => w.id === project.id);
     if (!existing) {
@@ -246,21 +252,15 @@ function App() {
         />
       ))}
 
-      {/* Taskbar */}
-      <div className="taskbar">
-        <div className="start-btn">R</div>
-        <div className="taskbar-apps">
-          {openWindows.map(win => (
-            <div key={win.id} className="task-item" onClick={() => handleFocus(win.id)}>
-              {win.name}
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* Context Menu */}
       {menuPos && (
         <div className="context-menu" style={{ top: menuPos.y, left: menuPos.x }} onClick={(e) => e.stopPropagation()}>
+          {/* only delete selected items*/}
+          {selectedIds.length > 0 && (
+            <div className="menu-item delete" onClick={deleteSelected}>
+              Delete ({selectedIds.length})
+            </div>
+          )}
           <div className="menu-item" onClick={createNewPage}>New Page</div>
           <div className="menu-item" onClick={createNewFolder}>New Folder</div>
           <div className="menu-item" onClick={() => window.location.reload()}>Refresh Desktop</div>
