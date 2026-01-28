@@ -59,7 +59,38 @@ function App() {
     }
   };
 
-  const stopDragging = () => {
+  const stopDragging = (e) => {
+    if (draggingIcon) {
+      // get drop coordinates
+      const dropX = e.clientX;
+      const dropY = e.clientY;
+
+      // check if landed in folder icon
+      const targetFolder = items.find(item => {
+        if (item.type !== 'folder' || item.id === draggingIcon.id) return false;
+        
+        const pos = iconPositions[item.id];
+        // check if drop coordinates are within the folder icons 100x120 area
+        return (
+          dropX >= pos.x && dropX <= pos.x + 100 &&
+          dropY >= pos.y && dropY <= pos.y + 120
+        );
+      });
+
+      if (targetFolder) {
+        // move the item into the folder's children array
+        setItems(prevItems => prevItems.map(item => {
+          if (item.id === targetFolder.id) {
+            return { ...item, children: [...(item.children || []), draggingIcon.id] };
+          }
+          // mark the item as "hidden" from the desktop by giving it a parentId
+          if (item.id === draggingIcon.id) {
+            return { ...item, parentId: targetFolder.id };
+          }
+          return item;
+        }));
+      }
+    }
     setDraggingIcon(null);
     setDraggingWin(null);
   };
@@ -124,6 +155,8 @@ function App() {
     setMenuPos({ x: e.clientX, y: e.clientY });
   };
 
+
+  /*----------------------------------[]-----------------------------------*/
   return (
     <div 
       className="desktop" 
@@ -132,8 +165,8 @@ function App() {
       onMouseMove={handleGlobalMouseMove} 
       onMouseUp={stopDragging}
     >
-      {/* 1. Icons */}
-      {items.map(p => (
+      {/* cons only on desktop */}
+      {items.filter(p => !p.parentId).map(p => (
         <div 
           key={p.id} 
           className="icon" 
@@ -150,11 +183,13 @@ function App() {
         </div>
       ))}
 
-      {/* 2. Windows */}
+      {/* Windows */}
       {openWindows.map(win => (
         <Window 
           key={win.id} 
           window={win} 
+          allItems={items} // Pass the full items list
+          onOpenItem={(item) => openWindow(item)} // Allow opening items from folder
           isDragging={draggingWin?.id === win.id}
           onClose={() => closeWindow(win.id)} 
           onFocus={() => handleFocus(win.id)} 
@@ -162,7 +197,10 @@ function App() {
         />
       ))}
 
-      {/* 3. Taskbar */}
+
+  {/*----------------------------------[htlm]-----------------------------------*/}
+
+      {/* Taskbar */}
       <div className="taskbar">
         <div className="start-btn">R</div>
         <div className="taskbar-apps">
@@ -174,7 +212,7 @@ function App() {
         </div>
       </div>
 
-      {/* 4. Context Menu */}
+      {/* Context Menu */}
       {menuPos && (
       <div className="context-menu" style={{ top: menuPos.y, left: menuPos.x }}>
         <div className="menu-item" onClick={createNewPage}>New Page</div>
