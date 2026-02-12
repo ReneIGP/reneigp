@@ -23,7 +23,16 @@ function App() {
       icon: 'https://www.svgrepo.com/show/512317/github-142.svg',
       url: 'https://reneigp.github.io/Mapventure/', 
       launch: { width: "600px", height: "500px" }
+    },
+    {
+      id: 'courtFinder',
+      name: 'Court Finder',
+      type: 'readme',
+      icon: 'https://www.svgrepo.com/show/512317/github-142.svg',
+      url: 'https://reneigp.github.io/CourtFinder/', 
+      launch: { width: "600px", height: "500px" }
     }
+    
   ]);
 
   /*----------------------------------[Initialize icon positions]-----------------------------------*/
