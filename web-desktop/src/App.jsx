@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { use, useState } from 'react';
 import { projects } from './data/projects.js';
 import Window from './components/Window';
 import './App.css';
@@ -8,18 +8,33 @@ function App() {
   const [openWindows, setOpenWindows] = useState([]);
   const [nextZ, setNextZ] = useState(100);
   const [menuPos, setMenuPos] = useState(null);
-  const [draggingIcon, setDraggingIcon] = useState(null);
   const [draggingWin, setDraggingWin] = useState(null);
-  const [items, setItems] = useState([...projects]);
   const [selectionBox, setSelectionBox] = useState(null);
   const [selectedIds, setSelectedIds] = useState([]);
+  
+  const [draggingIcon, setDraggingIcon] = useState(null);
+
+  const [items, setItems] = useState([
+    ...projects,
+    {
+      id: 'mapventure',
+      name: 'Mapventure',
+      type: 'readme',
+      icon: 'https://www.svgrepo.com/show/512317/github-142.svg',
+      url: 'https://reneigp.github.io/Mapventure/', 
+      launch: { width: "600px", height: "500px" }
+    }
+  ]);
 
   /*----------------------------------[Initialize icon positions]-----------------------------------*/
+
   const [iconPositions, setIconPositions] = useState(
-    projects.reduce((acc, p, i) => ({
-      ...acc, 
-      [p.id]: { x: 30, y: 30 + (i * 120) } 
-    }), {})
+    items
+      .filter(item => !item.parentId) 
+      .reduce((acc, p, i) => ({
+        ...acc, 
+        [p.id]: { x: 30, y: 30 + (i * 120) } 
+      }), {})
   );
 
   /*----------------------------------[Selection Logic]-----------------------------------*/
