@@ -1,6 +1,8 @@
 import React, { use, useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
 import { projects } from './data/projects.js';
 import Window from './components/Window';
+import Portfolio from './portfolio';
 import './App.css';
 
 function App() {
@@ -241,97 +243,105 @@ function App() {
 
   /*----------------------------------[HTML]-----------------------------------*/
   return (
-    <div 
-      className="desktop" 
-      onContextMenu={handleContextMenu} 
-      onMouseDown={startSelection}
-      onMouseMove={handleGlobalMouseMove} 
-      onMouseUp={stopDragging}
-    >
-      {/* selection marquee */}
-      {selectionBox && (
-        <div className="selection-marquee" style={{
-          left: Math.min(selectionBox.startX, selectionBox.currentX),
-          top: Math.min(selectionBox.startY, selectionBox.currentY),
-          width: Math.abs(selectionBox.currentX - selectionBox.startX),
-          height: Math.abs(selectionBox.currentY - selectionBox.startY)
-        }} />
-      )}
+    <Routes>
+      {/* Portfolio is now the homepage */}
+      <Route path="/" element={<Portfolio />} />
 
-      {/* Taskbar */}
-      <div className="taskbar">
-        <div className="start-btn">R</div>
-        <div className="taskbar-apps">
-          {openWindows.map(win => (
-            <div key={win.id} className="task-item" onClick={() => handleFocus(win.id)}>
-              {win.name}
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* The Web OS lives at /os */}
+      <Route path="/os" element={
+          <div 
+            className="desktop" 
+            onContextMenu={handleContextMenu} 
+            onMouseDown={startSelection}
+            onMouseMove={handleGlobalMouseMove} 
+            onMouseUp={stopDragging}
+          >
+            {/* selection marquee */}
+            {selectionBox && (
+              <div className="selection-marquee" style={{
+                left: Math.min(selectionBox.startX, selectionBox.currentX),
+                top: Math.min(selectionBox.startY, selectionBox.currentY),
+                width: Math.abs(selectionBox.currentX - selectionBox.startX),
+                height: Math.abs(selectionBox.currentY - selectionBox.startY)
+              }} />
+            )}
 
-      {/* only select items on desktop*/}
-      {items.filter(p => !p.parentId).map(p => (
-        <div 
-          key={p.id} 
-          className={`icon ${selectedIds.includes(p.id) ? 'selected' : ''}`}
-          style={{ 
-            position: 'absolute', 
-            left: iconPositions[p.id]?.x || 0, 
-            top: iconPositions[p.id]?.y || 0 
-          }}
-          onMouseDown={(e) => startIconDrag(p.id, e)}
-          onDoubleClick={() => openWindow(p)}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <img src={p.icon} alt={p.name} draggable="false" />
-          <span>{p.name}</span>
-        </div>
-      ))}
-
-      {/* Windows */}
-      {openWindows.map(win => (
-        <Window 
-          key={win.id} 
-          window={win} 
-          allItems={items}
-          onOpenItem={(item) => openWindow(item)}
-          isDragging={draggingWin?.id === win.id}
-          onClose={() => closeWindow(win.id)} 
-          onFocus={() => handleFocus(win.id)} 
-          onDragStart={(e) => startWinDrag(win.id, e)}
-        />
-      ))}
-
-      {/* Context Menu */}
-      {menuPos && (
-        <div className="context-menu" style={{ top: menuPos.y, left: menuPos.x }} onClick={(e) => e.stopPropagation()}>
-          {/* only show when something is selected*/}
-          {selectedIds.length > 0 && (
-            <>
-              <div className="menu-item delete" onClick={deleteSelected}>
-                Delete ({selectedIds.length})
+            {/* Taskbar */}
+            <div className="taskbar">
+              <div className="start-btn">R</div>
+              <div className="taskbar-apps">
+                {openWindows.map(win => (
+                  <div key={win.id} className="task-item" onClick={() => handleFocus(win.id)}>
+                    {win.name}
+                  </div>
+                ))}
               </div>
-              
-              {/* only rename one at a time*/}
-              {selectedIds.length === 1 && (
-                <div className="menu-item" onClick={renameItem}>
-                  Rename
-                </div>
-              )}
-              
-              {/* separator*/}
-              <hr style={{ border: 'none', borderTop: '1px solid #444', margin: '4px 0' }} />
-            </>
-          )}
+            </div>
 
-          {/* Creation Group: Always shows */}
-          <div className="menu-item" onClick={createNewPage}>New Page</div>
-          <div className="menu-item" onClick={createNewFolder}>New Folder</div>
-          <div className="menu-item" onClick={() => window.location.reload()}>Refresh Desktop</div>
-        </div>
-      )}
-    </div>
+            {/* only select items on desktop*/}
+              {items.filter(p => !p.parentId).map(p => (
+              <div
+                key={p.id}
+                className={`icon ${selectedIds.includes(p.id) ? 'selected' : ''}`}
+                style={{
+                  position: 'absolute',
+                  left: iconPositions[p.id]?.x || 0,
+                  top: iconPositions[p.id]?.y || 0
+                }}
+                onMouseDown={(e) => startIconDrag(p.id, e)}
+                onDoubleClick={() => openWindow(p)}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <img src={p.icon} alt={p.name} draggable="false" />
+                <span>{p.name}</span>
+              </div>
+            ))}
+
+            {/* Windows */}
+            {openWindows.map(win => (
+              <Window
+                key={win.id}
+                window={win}
+                allItems={items}
+                onOpenItem={(item) => openWindow(item)}
+                isDragging={draggingWin?.id === win.id}
+                onClose={() => closeWindow(win.id)}
+                onFocus={() => handleFocus(win.id)}
+                onDragStart={(e) => startWinDrag(win.id, e)}
+              />
+            ))}
+
+            {/* Context Menu */}
+            {menuPos && (
+              <div className="context-menu" style={{ top: menuPos.y, left: menuPos.x }} onClick={(e) => e.stopPropagation()}>
+                {/* only show when something is selected*/}
+                {selectedIds.length > 0 && (
+                  <>
+                    <div className="menu-item delete" onClick={deleteSelected}>
+                      Delete ({selectedIds.length})
+                    </div>
+                    
+                    {/* only rename one at a time*/}
+                    {selectedIds.length === 1 && (
+                      <div className="menu-item" onClick={renameItem}>
+                        Rename
+                      </div>
+                    )}
+                    
+                    {/* separator*/}
+                    <hr style={{ border: 'none', borderTop: '1px solid #444', margin: '4px 0' }} />
+                  </>
+                )}
+
+                {/* Creation Group: Always shows */}
+                <div className="menu-item" onClick={createNewPage}>New Page</div>
+                <div className="menu-item" onClick={createNewFolder}>New Folder</div>
+                <div className="menu-item" onClick={() => window.location.reload()}>Refresh Desktop</div>
+              </div>
+            )}
+          </div>
+        } />
+    </Routes>
   );
 }
 
