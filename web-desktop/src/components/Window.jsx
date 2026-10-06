@@ -1,35 +1,43 @@
-export default function Window({ window: win, onClose, onFocus, onDragStart, isDragging, allItems, onOpenItem }) {
+export default function Window({ win, item, contents, shield, onClose, onFocus, onDragStart, onOpenItem, onItemDragStart }) {
   const style = {
-    width: win.launch?.width || '400px',
-    height: win.launch?.height || '300px',
+    width: item.launch?.width || '400px',
+    height: item.launch?.height || '300px',
     zIndex: win.zIndex,
     top: win.y,
     left: win.x,
     position: 'absolute'
   };
 
-  const children = allItems?.filter(item => item.parentId === win.id) || [];
-
   return (
-    <div className="window" style={style} onMouseDown={(e) => { e.stopPropagation(); onFocus(); }}>
+    <div className="window" data-window-id={item.id} style={style} onMouseDown={(e) => { e.stopPropagation(); onFocus(); }}>
       <div className="titlebar" onMouseDown={onDragStart}>
-        <span>{win.name}</span>
-        <button className="close-btn" onClick={(e) => { e.stopPropagation(); onClose(); }}>X</button>
+        <span>{item.name}</span>
+        <button className="close-btn" onMouseDown={(e) => e.stopPropagation()} onClick={onClose}>X</button>
       </div>
       <div className="content" style={{ position: 'relative' }}>
-        {isDragging && <div className="iframe-shield"></div>}
-        {win.type === 'folder' ? (
+        {item.type === 'folder' ? (
           <div className="folder-view">
-            {children.map(item => (
-              <div key={item.id} className="icon" onMouseDown={(e) => e.stopPropagation()} onDoubleClick={() => onOpenItem(item)}>
-                <img src={item.icon} alt={item.name} style={{ width: '40px' }} draggable="false" />
-                <span style={{ fontSize: '11px', color: '#333', textShadow: 'none' }}>{item.name}</span>
+            {contents.map(child => (
+              <div
+                key={child.id}
+                data-item-id={child.id}
+                className="icon"
+                title={child.name}
+                onMouseDown={(e) => onItemDragStart(child.id, e)}
+                onDoubleClick={() => onOpenItem(child)}
+              >
+                <img src={child.icon} alt={child.name} draggable="false" />
+                <span>{child.name}</span>
               </div>
             ))}
-            {children.length === 0 && <p style={{ color: '#999', fontSize: '12px', padding: '10px' }}>Folder is empty</p>}
+            {contents.length === 0 && <p style={{ color: '#999', fontSize: '12px', padding: '10px' }}>Folder is empty</p>}
           </div>
         ) : (
-          <iframe src={win.url} title={win.name} style={{ width: '100%', height: '100%', border: 'none' }} />
+          <>
+            {/* iframes swallow mouse events, so cover them during any drag */}
+            {shield && <div className="iframe-shield"></div>}
+            <iframe src={item.url} title={item.name} style={{ width: '100%', height: '100%', border: 'none' }} />
+          </>
         )}
       </div>
     </div>

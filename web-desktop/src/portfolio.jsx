@@ -31,7 +31,7 @@ const NAV_LINKS = [
 const HERO = {
   name:     "Rene Ignacio Gonzalez Perez",
   title:    "Software Engineer & IT Consultant",
-  //tagline:  "Software Engineer building anything from neural networks, to self-driving cars, to webapps.",
+  tagline:  "Computer Science M.S. student with hands-on full-stack development, REST API, and integration experience across internships and consulting work. Comfortable connecting systems and automating workflows.",
   location: "Göteborg, Sweden",
   links: [
     { icon: Globe,    label: "reneigp.se",                   href: "https://reneigp.se"                                  },
@@ -46,32 +46,27 @@ trash with a fresh OS, or setting up homelabs. I care about building things that
 Outside of code you'll find me climbing and organizing events for my fellow students.`;
 
 const SKILLS = [
-  { category: "Languages",     items: ["Python", "C++", "JavaScript", "TypeScript", "SQL"] },
-  { category: "Frontend",      items: ["React", "Vue.js", "Tailwind CSS", "HTML/CSS", "Web Audio API"] },
-  { category: "Backend",       items: ["Django", "Django REST Framework", "Node.js", "RESTful APIs"] },
-  { category: "ML / AI",       items: ["TensorFlow", "Keras", "MediaPipe", "OpenCV", "LSTM"] },
-  { category: "DevOps & Tools",items: ["Docker", "GitLab CI/CD", "CMake", "DigitalOcean", "Catch2"] },
-  { category: "Other",         items: ["Google Maps API", "Generative AI", "UI/UX Design", "Rapid Prototyping", "Homelabbing"] },
+  { category: "Languages",     items: ["Java", "Python", "JavaScript", "TypeScript", "C++", "SQL"] },
+  { category: "DevOps & Infrastructure", items: ["Git", "Gerrit", "Jenkins", "Linux (Ubuntu Server)", "Docker", "Docker Compose", "Kubernetes (k3s)", "GitLab CI/CD", "Bash", "YAML", "Cloudflare", "Tailscale", "DNS", "SSH"] },
+  { category: "Backend",       items: ["Java (Spring Boot)", "Django", "Node.js", "REST APIs", "Maven", "MongoDB"] },
+  { category: "Architecture & Messaging", items: ["Distributed systems", "Service-Oriented Architecture", "Microservices", "Event-driven design", "MQTT", "JWT authentication"] },
+  { category: "Frontend",      items: ["React", "Vue.js", "HTML", "CSS", "Tailwind CSS", "Responsive UI"] },
+  { category: "AI & ML",       items: ["MediaPipe", "Neural networks (LSTM)", "TensorFlow", "Keras", "AI-assisted development tools"] },
+  { category: "Practices",     items: ["Agile / Scrum", "Code review", "TDD (Catch2)", "Technical documentation"] },
+  { category: "Spoken Languages", items: ["Swedish (Native)", "Spanish (Native)", "English (C2)"] },
 ];
 
 const EXPERIENCE = [
   {
     company:  "Ericsson",
-    role:     "Part-time worker",
-    period:   "August 2026 – Present",
+    role:     "R&D Intern",
+    period:   "June 2026 – Present",
     location: "Gothenburg, Sweden",
     bullets: [
-      "Part-time work focused on CI/CD development with BCSS"],
-  },
-  {
-    company:  "Ericsson",
-    role:     "R&D Summer Intern",
-    period:   "June 2026 – August 2026",
-    location: "Gothenburg, Sweden",
-    bullets: [
-      "R&D internship focused on CI/CD pipelines and automated test infrastructure for large-scale telecom systems.",
+      "Developed scripts to automate test-result review and failure triage.",
+      "Developed a tool to measure and evaluate AI models/skills.",
       "Working in Python and Linux environments with the Test Framework and System Test teams, using container-based tooling.",
-      "eveloped scripts to automate test-result review and failure triage."],
+    ],
   },
   {
     company:  "CTB (Chalmers Teknologkonsulter AB)",
@@ -79,9 +74,9 @@ const EXPERIENCE = [
     period:   "Feb 2026 – Present",
     location: "Gothenburg, Sweden",
     bullets: [
-      "Execute technology and management projects for external customers and internal company initiatives.",
-      "Deliver IT consultancy services, bridging the gap between technical execution and business needs.",
-      "Manage full service-delivery lifecycle — marketing, recruitment, and client events.",
+      "Deliver technical consulting projects for external clients, from requirements gathering through implementation and handover.",
+      "Developed a script to parse and classify missing/wrong invoices.",
+      "Manage the full life cycle of service delivery, including marketing, recruitment services, and client events.",
     ],
   },
   {
@@ -90,8 +85,7 @@ const EXPERIENCE = [
     period:   "Sep 2025 – Nov 2025",
     location: "Gothenburg, Sweden",
     bullets: [
-      "Built RESTful endpoints to enhance backend scalability.",
-      "Developed an internal Admin Dashboard that streamlined operational workflows.",
+      "Built RESTful endpoints to enhance backend scalability and developed an internal Admin Dashboard for operational workflows.",
     ],
   },
 ];
@@ -101,8 +95,24 @@ const PROJECTS = [
     name:   "ASL Hand-Sign Recognition System",
     period: "Oct 2025 – Jan 2026",
     role:   "Lead Full-Stack & ML Developer",
-    desc:   "Real-time ASL recognition platform powered by an LSTM neural network and MediaPipe for hand-landmark extraction. Custom dashboard for live data collection and model versioning.",
+    desc:   "Real-time ASL recognition platform with a React frontend and Django backend, featuring a custom dashboard for data collection and model versioning. LSTM-based neural network with MediaPipe for hand-landmark extraction; containerized with Docker and deployed via GitLab CI/CD.",
     tags:   ["TensorFlow", "Keras", "MediaPipe", "Django REST", "React", "Docker", "GitLab CI/CD"],
+    highlight: false,
+  },
+  {
+    name:   "Flossy — Distributed Dental Appointment System",
+    period: "Nov 2024 – Jan 2025",
+    role:   "Backend Developer (Java)",
+    desc:   "Distributed appointment-booking system built as a 5-person agile team. Java (Spring Boot) microservices in a Service-Oriented Architecture, decoupled through an event-driven MQTT publish/subscribe layer, with JWT authentication for REST requests routed through an API Gateway.",
+    tags:   ["Java", "Spring Boot", "Microservices", "MQTT", "JWT", "MongoDB"],
+    highlight: false,
+  },
+  {
+    name:   "Personal Homelab & reneigp.se",
+    period: "Ongoing",
+    role:   "Self-Hosted Infrastructure",
+    desc:   "Self-hosted Ubuntu Server homelab running this website and a NAS for remote file access. Cloudflare for DNS, TLS and public exposure, Tailscale as a private VPN mesh, and services deployed with Docker Compose with configuration versioned in Git.",
+    tags:   ["Ubuntu Server", "Docker Compose", "Cloudflare", "Tailscale", "DNS", "Git"],
     highlight: false,
   },
   {
@@ -134,19 +144,19 @@ const PROJECTS = [
 const EDUCATION = [
   {
     institution: "University of Gothenburg",
-    degree:      "B.S. in Software Engineering and Management",
-    period:      "Aug 2023 – June 2026",
+    degree:      "M.S. in Computer Science",
+    period:      "Aug 2026 – Jun 2028",
     location:    "Gothenburg, Sweden",
-    extras: [
-    "OOPSEX (Göta Studentkår) — Core Member & Cashier (May 2024 – Present): managed yearly budget, organised events for 150+ people.",
-    ],
   },
   {
     institution: "University of Gothenburg",
-    degree:      "M.S Computer Science",
-    period:      "September 2026 – present",
+    degree:      "B.S. in Software Engineering and Management",
+    period:      "Aug 2023 – Jun 2026",
     location:    "Gothenburg, Sweden",
-  }
+    extras: [
+      "OOPSEX (Göta Studentkår) — Core Member & Cashier (May 2024 – Present): managed yearly budget, organised events for 150+ people.",
+    ],
+  },
 ];
 
 /* ── SHARED PADDING — edit once, applies everywhere ─────── */
@@ -368,17 +378,21 @@ function Education() {
   return (
     <section id="education" className={`py-24 w-full ${PAD}`}>
       <SectionLabel index="05" title="Education" />
-      <div className="mt-10 bg-slate-800/20 border border-slate-700/40 rounded-xl p-6 hover:border-amber-400/25 transition-colors max-w-3xl">
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 mb-1">
-          <h3 className="text-slate-100 text-xl font-semibold" style={{ fontFamily: "'DM Serif Display', serif" }}>{EDUCATION.institution}</h3>
-          <span className="font-mono text-xs text-amber-400/70 whitespace-nowrap mt-0.5">{EDUCATION.period}</span>
-        </div>
-        <p className="text-amber-400/80 font-mono text-sm mb-1">{EDUCATION.degree}</p>
-        <p className="text-slate-500 font-mono text-xs mb-5">{EDUCATION.location}</p>
-        {EDUCATION.extras.map((e, i) => (
-          <p key={i} className="text-slate-400 text-sm leading-relaxed border-t border-slate-700/40 pt-4">
-            <span className="text-amber-400/60 mr-2">↗</span>{e}
-          </p>
+      <div className="mt-10 flex flex-col gap-6 max-w-3xl">
+        {EDUCATION.map((edu, i) => (
+          <div key={i} className="bg-slate-800/20 border border-slate-700/40 rounded-xl p-6 hover:border-amber-400/25 transition-colors">
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 mb-1">
+              <h3 className="text-slate-100 text-xl font-semibold" style={{ fontFamily: "'DM Serif Display', serif" }}>{edu.institution}</h3>
+              <span className="font-mono text-xs text-amber-400/70 whitespace-nowrap mt-0.5">{edu.period}</span>
+            </div>
+            <p className="text-amber-400/80 font-mono text-sm mb-1">{edu.degree}</p>
+            <p className="text-slate-500 font-mono text-xs mb-5">{edu.location}</p>
+            {edu.extras?.map((e, j) => (
+              <p key={j} className="text-slate-400 text-sm leading-relaxed border-t border-slate-700/40 pt-4">
+                <span className="text-amber-400/60 mr-2">↗</span>{e}
+              </p>
+            ))}
+          </div>
         ))}
       </div>
     </section>
