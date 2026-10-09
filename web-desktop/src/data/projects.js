@@ -22,5 +22,13 @@ export const projects = [
     icon: "https://www.svgrepo.com/show/512317/github-142.svg",
     url: "https://reneigp.github.io/CourtFinder/",
     launch: { width: "600px", height: "500px" }
+  },
+  {
+    // Opens in a new tab: the emulator needs cross-origin isolation, which an iframe here can't get
+    id: "gba-player",
+    name: "GBA Player",
+    type: "link",
+    icon: "/gba/icon.svg",
+    url: "/gba/"
   }
 ];

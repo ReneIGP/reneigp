@@ -48,6 +48,10 @@ export default function Desktop() {
   };
 
   const openWindow = (item) => {
+    if (item.type === 'link') {
+      window.open(item.url, '_blank', 'noopener');
+      return;
+    }
     const z = nextZ.current++;
     setOpenWindows(prev => {
       if (prev.some(w => w.id === item.id)) {
